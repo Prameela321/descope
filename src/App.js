@@ -15,38 +15,46 @@ function App() {
 
     const exampleFetchCall = async () => {
         const sessionToken = getSessionToken();
-		console.log(sessionToken,"session token");
-        setTokenVal(sessionToken);
-        const response = sendMessage(sessionToken);
-        console.log(response,"response");
-        setLocation(response.body);
-        // return false;
+		/*
+        created backend api in src/api/data.js
+        which is a replication of  hosted backend to test it locally with custom jwt claim
+        for newly created project : P2xmZ6o36U02wn4PDWZ59KoixPcg
+
+
+
+
+            const response = sendMessage(sessionToken);
+            console.log(response,"response");
+            setData(response.body);
+         */
+
+
         if (!sessionToken) {
             console.log('No session token available');
             return;
         }
 
-        // try {
-        //     const response = await fetch(
-        //         "https://descope-escape-room.com/api/data", 
-        //         {
-        //             method: "POST",
-        //             headers: {
-        //                 Accept: "application/json, text/plain, */*",
-        //                 "Content-Type": "application/json",
-        //                 'x-project-id': 'P2xmZ6o36U02wn4PDWZ59KoixPcg',
-        //                 'authorization': `Bearer ${sessionToken}`,
-        //             },
-        //         }
-        //     );
-        //     const json = await response.json();
-        //     if (json.body.startsWith("Error")) {
-        //         throw new Error(json.body);
-        //     }
-        //     setData(json.body);
-        // } catch (err) {
-        //     setError(err.message);
-        // }
+        try {
+            const response = await fetch(
+                "https://descope-escape-room.com/api/data", 
+                {
+                    method: "POST",
+                    headers: {
+                        Accept: "application/json, text/plain, */*",
+                        "Content-Type": "application/json",
+                        'x-project-id': 'P2xmZ6o36U02wn4PDWZ59KoixPcg',
+                        'authorization': `Bearer ${sessionToken}`,
+                    },
+                }
+            );
+            const json = await response.json();
+            if (json.body.startsWith("Error")) {
+                throw new Error(json.body);
+            }
+            setData(json.body);
+        } catch (err) {
+            setError(err.message);
+        }
     }
 
     const handleLogout = useCallback(() => {
@@ -82,7 +90,7 @@ function App() {
             (
                 <>
                     <p>Hello {user.name}</p>
-                    <p>Location : {location}</p>
+                    <p>Location : {data}</p>
                     <button onClick={handleLogout}>Logout</button>
                     {data && <div>Data: {data}</div>}
                     {error && <div>Error: {error}</div>}
